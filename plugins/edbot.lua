@@ -2,31 +2,7 @@
 local http = require("socket.http")
 local string = require("string")
 local ltn12 = require ("ltn12")
-
-local function encode_table(table)
-    local str = ""
-
-    local function char2hexcode(c)
-        return string.format("%%%02X", string.byte(c))
-    end
-
-    local function escape(str)
-        str = string.gsub(str, "\n", "\r\n")
-        str = string.gsub(str, "([^0-9a-zA-Z_. -])", char2hexcode)
-        str = string.gsub(str, " ", "+")
-        return str
-    end
-
-    for key, vals in pairs(table) do
-        if type(vals) ~= "table" then
-            vals = {vals}
-        end
-        for k, val in pairs(vals) do
-            str = str .. "&" .. escape(key) .. "=" ..escape(val)
-        end
-    end
-    return string.sub(str,2)
-end
+local funcs = (loadfile "./libs/functions.lua")()
 
 local function edbot(msg)
     local params = {
@@ -39,7 +15,7 @@ local function edbot(msg)
         ['msg'] = tostring(msg),
     }
     
-    local data = encode_table(params)
+    local data = funcs.encode_table(params)
     local response = {}
 
     r, c, h = http.request ({
