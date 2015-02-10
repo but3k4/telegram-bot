@@ -71,4 +71,29 @@ function M.tostring(tbl)
     return "{" .. table.concat(result, ",") .. "}"
 end
 
+function M.encode_table(tbl)
+    local str = ""
+
+    local function char2hexcode(c)
+        return string.format("%%%02X", string.byte(c))
+    end
+
+    local function escape(str)
+        str = string.gsub(str, "\n", "\r\n")
+        str = string.gsub(str, "([^0-9a-zA-Z_. -])", char2hexcode)
+        str = string.gsub(str, " ", "+")
+        return str
+    end
+
+    for key, vals in pairs(tbl) do
+        if type(vals) ~= "table" then
+            vals = {vals}
+        end
+        for k, val in pairs(vals) do
+            str = str .. "&" .. escape(key) .. "=" ..escape(val)
+        end
+    end
+    return string.sub(str,2)
+end
+
 return M
