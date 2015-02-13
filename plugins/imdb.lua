@@ -5,19 +5,20 @@ function imdb(movie)
 
     movie = movie:gsub(' ', '+')
     url = "http://www.imdbapi.com/?t=" .. movie
-    r, c, h = http.request(url)
+    response, code, headers = http.request(url)
 
-    if c ~= 200 then
-        return nil
+    if code ~= 200 then
+        return "Error: " .. code
     end
 
-    if #r > 0 then
-        r = json:decode(r)
+    if #response > 0 then
+        r = json:decode(response)
         r['Url'] = "http://imdb.com/title/" .. r.imdbID
         t = ""
         for k, v in pairs(r) do t = t .. k .. ": " .. v .. ", " end
+        return t:sub(1, -3)
     end
-    return t:sub(1, -3)
+    return nil
 end
 
 function run(msg, matches)
@@ -25,8 +26,8 @@ function run(msg, matches)
 end
 
 return {
-    description = "Imdb plugin",
+    description = "Imdb plugin for telegram",
     usage = "!imdb [movie]",
-    patterns = {"^!imdb (.*)"},
+    patterns = {"^!imdb (.+)"},
     run = run
 }
