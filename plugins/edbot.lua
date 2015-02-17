@@ -14,21 +14,25 @@ local function edbot(msg)
         ['tst'] = 1,
         ['msg'] = tostring(msg),
     }
-    
-    local data = funcs.encode_table(params)
+
+    local body = funcs.encode_table(params)
     local response = {}
 
-    r, c, h = http.request ({
+    ok, code, headers, status = http.request ({
         method = "POST",
         url = "http://www.ed.conpet.gov.br/mod_perl/bot_gateway.cgi",
         headers = {
             ["content-type"] = "application/x-www-form-urlencoded",
-            ["content-length"] = string.len(data),
+            ["content-length"] = tostring(#body),
         },
-        source = ltn12.source.string(data),
+        source = ltn12.source.string(body),
         sink = ltn12.sink.table(response)
     })
-    
+
+    if code ~= 200 then
+	return "Error: " .. status:gsub('HTTP/1.1', ''):gsub('^ ', '')
+    end
+
     if response[1] ~= nil then
         return tostring(response[1]):gsub('<[^<>]*>', ''):gsub('\n', ''):gsub('<a href="#', '')
     end
@@ -39,10 +43,10 @@ function run(msg, matches)
 end
 
 return {
-    description = "Edbot plugin", 
+    description = "Edbot plugin",
     usage = "Me explica: subject or math expression.",
     patterns = {
         "^[Mm]e explica: (.*)$",
-    }, 
-    run = run 
+    },
+    run = run
 }
