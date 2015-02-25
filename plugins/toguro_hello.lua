@@ -1,7 +1,7 @@
 
-local f = io.open('./res/toguro.json', "r+")
+local f = io.open('./data/toguro.json', "r+")
 if f == nil then
-  f = io.open('./res/toguro.json', "w+")
+  f = io.open('./data/toguro.json', "w+")
   f:write("{}") -- Write empty table
   f:close()
   _hello = {}
