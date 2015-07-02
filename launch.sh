@@ -14,20 +14,20 @@ install_luarocks() {
   git clone https://github.com/keplerproject/luarocks.git
   cd luarocks
   git checkout tags/v2.2.1 # Current stable
-   
+
   PREFIX="$THIS_DIR/.luarocks"
-  
+
   ./configure --prefix=$PREFIX --sysconfdir=$PREFIX/luarocks --force-config
-  
+
   RET=$?; if [ $RET -ne 0 ];
-    then echo "Error. Exiting."; exit $RET; 
+    then echo "Error. Exiting."; exit $RET;
   fi
 
   make build && make install
   RET=$?; if [ $RET -ne 0 ];
     then echo "Error. Exiting.";exit $RET;
   fi
-   
+
   cd ..
   rm -rf luarocks
 }
@@ -39,6 +39,36 @@ install_rocks() {
   fi
 
   ./.luarocks/bin/luarocks install oauth
+  RET=$?; if [ $RET -ne 0 ];
+    then echo "Error. Exiting."; exit $RET;
+  fi
+
+  ./.luarocks/bin/luarocks install redis-lua
+  RET=$?; if [ $RET -ne 0 ];
+    then echo "Error. Exiting."; exit $RET;
+  fi
+
+  ./.luarocks/bin/luarocks install lua-cjson
+  RET=$?; if [ $RET -ne 0 ];
+    then echo "Error. Exiting."; exit $RET;
+  fi
+
+  ./.luarocks/bin/luarocks install fakeredis
+  RET=$?; if [ $RET -ne 0 ];
+    then echo "Error. Exiting."; exit $RET;
+  fi
+
+  ./.luarocks/bin/luarocks install xml
+  RET=$?; if [ $RET -ne 0 ];
+    then echo "Error. Exiting."; exit $RET;
+  fi
+
+  ./.luarocks/bin/luarocks install feedparser
+  RET=$?; if [ $RET -ne 0 ];
+    then echo "Error. Exiting."; exit $RET;
+  fi
+  
+  ./.luarocks/bin/luarocks install serpent
   RET=$?; if [ $RET -ne 0 ];
     then echo "Error. Exiting."; exit $RET;
   fi
@@ -73,7 +103,5 @@ else
     exit 1
   fi
 
-  LUA_PATH=";;.luarocks/share/lua/5.2/?.lua;.luarocks/share/lua/5.2/?/init.lua" \
-    LUA_CPATH=";;.luarocks/lib/lua/5.2/?.so" \
-    ./tg/bin/telegram-cli -k ./tg/tg-server.pub -s ./bot/bot.lua -l 1
+  ./tg/bin/telegram-cli -k ./tg/tg-server.pub -s ./bot/bot.lua -l 1 -E
 fi

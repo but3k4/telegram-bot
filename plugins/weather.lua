@@ -30,7 +30,7 @@ function run(msg, matches)
   if string.len(matches[1]) > 2 then 
     city = matches[1]
   else
-    city = "Sao Paulo"
+    city = "Madrid,ES"
   end
   return get_weather(city)
 end
